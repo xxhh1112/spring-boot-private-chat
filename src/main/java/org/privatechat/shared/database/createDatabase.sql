@@ -1,0 +1,30 @@
+CREATE DATABASE chat;
+
+USE chat;
+
+CREATE TABLE chatChannel (
+  uuid VARCHAR(256) NOT NULL,
+  userIdOne INT NOT NULL,
+  userIdTwo INT NOT NULL,
+  PRIMARY KEY (uuid)
+);
+
+CREATE TABLE chatMessage (
+  id INT NOT NULL AUTO_INCREMENT,
+  authorUserId INT NOT NULL,
+  recipientUserId INT NOT NULL,
+  contents TEXT NOT NULL,
+  timeSent TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE user (
+  id INT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(64) NOT NULL,
+  password VARCHAR(256) NOT NULL,
+  role VARCHAR(45) DEFAULT NULL,
+  fullName VARCHAR(64) NOT NULL,
+  isPresent BIT DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE KEY username_UNIQUE (email)
+);
