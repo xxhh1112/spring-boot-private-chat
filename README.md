@@ -1,6 +1,6 @@
 #Spring Boot Private Chat Project
 
-1-1 instant messaging project designed to demonstrate WebSockets in a load-balanced environment. Users can register, login/logout, see a friendlist, private message, send/receive notifications. WebSocket usages include user presence monitoring, notifications, and chat messages.
+1-1 instant messaging project designed to demonstrate WebSockets in a load-balanced environment. Users can register, login/logout, see a friendslist, private message, and send/receive notifications. WebSocket usages include user presence monitoring, notifications, and chat messages.
 
 ##Notable Technologies/Design Decisions
 - Backend: Java 8 with Sprint Boot
