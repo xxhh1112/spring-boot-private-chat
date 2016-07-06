@@ -29,8 +29,6 @@ import java.util.List;
 @Component
 public class UserService implements UserDetailsService, IUserService {
   private UserRepository userRepository;
-
-  private User currentUser;
   
   @Autowired
   private SimpMessagingTemplate simpMessagingTemplate;
@@ -43,30 +41,27 @@ public class UserService implements UserDetailsService, IUserService {
     this.userRepository = userRepository;
   }
 
-  private <T> UserService setUserContext(T userIdentifier, IUserRetrievalStrategy<T> strategy)
+  private <T> User getUser(T userIdentifier, IUserRetrievalStrategy<T> strategy)
       throws UserNotFoundException {
-    currentUser = strategy.getUser(userIdentifier);
+    User user = strategy.getUser(userIdentifier);
     
-    if (currentUser == null) { throw new UserNotFoundException("User not found."); }
+    if (user == null) { throw new UserNotFoundException("User not found."); }
     
-    return this;
+    return user;
   }
 
-  public UserService given(String userEmail) throws BeansException, UserNotFoundException {
-    setUserContext(userEmail, beanFactory.getBean(UserRetrievalByEmailStrategy.class));
-    return this; 
-  }
-   
-  public UserService given(long userId) throws BeansException, UserNotFoundException {
-    setUserContext(userId, beanFactory.getBean(UserRetrievalByIdStrategy.class));
-    return this; 
+  public User getUser(long userId) throws BeansException, UserNotFoundException {
+    return this.getUser(userId, beanFactory.getBean(UserRetrievalByIdStrategy.class));
   }
 
-  public UserService given(SecurityContext userSecurityContext) throws BeansException, UserNotFoundException {
-    setUserContext(userSecurityContext, beanFactory.getBean(UserRetrievalBySecurityContextStrategy.class));
-    return this;
+  public User getUser(String userEmail) throws BeansException, UserNotFoundException {
+    return this.getUser(userEmail, beanFactory.getBean(UserRetrievalByEmailStrategy.class));
   }
-  
+
+  public User getUser(SecurityContext userSecurityContext) throws BeansException, UserNotFoundException {
+    return this.getUser(userSecurityContext, beanFactory.getBean(UserRetrievalBySecurityContextStrategy.class));
+  }
+
   @Override
   public UserDetails loadUserByUsername(String email) {
     User user = userRepository.findByEmail(email);
@@ -122,38 +117,38 @@ public class UserService implements UserDetailsService, IUserService {
     }
   }
 
-  public List<UserDTO> retrieveFriendsList() {
-    List<User> users = userRepository.findFriendsListFor(currentUser.getEmail());
+  public List<UserDTO> retrieveFriendsList(User user) {
+    List<User> users = userRepository.findFriendsListFor(user.getEmail());
 
     return UserMapper.mapUsersToUserDTOs(users);
   }
   
-  public UserDTO retrieveUserInfo() {
+  public UserDTO retrieveUserInfo(User user) {
     return new UserDTO(
-      currentUser.getId(),
-      currentUser.getEmail(),
-      currentUser.getFullName()
+      user.getId(),
+      user.getEmail(),
+      user.getFullName()
     );
   }  
   
   // TODO: switch to a TINYINT field called "numOfConnections" to add/subtract
   // the total amount of user connections
-  public void setIsPresent(Boolean stat) {
-    currentUser.setIsPresent(stat);
+  public void setIsPresent(User user, Boolean stat) {
+    user.setIsPresent(stat);
      
-    userRepository.save(currentUser);
+    userRepository.save(user);
   }
 
-  public Boolean isPresent() {
-    return currentUser.getIsPresent(); 
+  public Boolean isPresent(User user) {
+    return user.getIsPresent(); 
   }
 
-  public void notifyUser(NotificationDTO notification) {
-    if (this.isPresent()) {
+  public void notifyUser(User recipientUser, NotificationDTO notification) {
+    if (this.isPresent(recipientUser)) {
       simpMessagingTemplate
-        .convertAndSend("/topic/user.notification." + currentUser.getId(), notification);
+        .convertAndSend("/topic/user.notification." + recipientUser.getId(), notification);
     } else {
-      System.out.println("sending email notification to " + currentUser.getFullName());
+      System.out.println("sending email notification to " + recipientUser.getFullName());
       // TODO: send email
     }
   }

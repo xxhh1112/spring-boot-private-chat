@@ -9,6 +9,7 @@ import org.privatechat.user.DTOs.RegistrationDTO;
 import org.privatechat.user.DTOs.UserDTO;
 import org.privatechat.user.exceptions.UserNotFoundException;
 import org.privatechat.user.interfaces.IUserController;
+import org.privatechat.user.models.User;
 import org.privatechat.user.services.UserService;
 import org.privatechat.user.strategies.UserRetrievalBySecurityContextStrategy;
 import org.springframework.beans.BeansException;
@@ -39,14 +40,16 @@ public class UserController implements IUserController {
   // TODO: actually implement concept of a "friendslist"
   @RequestMapping(value="/api/user/requesting/friendslist", method=RequestMethod.GET, produces="application/json")
   public ResponseEntity<String> retrieveRequestingUserFriendsList(Principal principal) throws UserNotFoundException {
-    List<UserDTO> friendslistUsers = userService.given(SecurityContextHolder.getContext()).retrieveFriendsList();
+    User requestingUser = userService.getUser(SecurityContextHolder.getContext());
+    List<UserDTO> friendslistUsers = userService.retrieveFriendsList(requestingUser);
     
     return JSONResponseHelper.createResponse(friendslistUsers, HttpStatus.OK);
   }
 
   @RequestMapping(value="/api/user/requesting/info", method=RequestMethod.GET, produces="application/json")
   public ResponseEntity<String> retrieveRequestUserInfo() throws UserNotFoundException {
-    UserDTO userDetails = userService.given(SecurityContextHolder.getContext()).retrieveUserInfo();
+    User requestingUser = userService.getUser(SecurityContextHolder.getContext());
+    UserDTO userDetails = userService.retrieveUserInfo(requestingUser);
 
     return JSONResponseHelper.createResponse(userDetails, HttpStatus.OK);
   }
