@@ -29,7 +29,7 @@ import java.util.List;
 @Component
 public class UserService implements UserDetailsService, IUserService {
   private UserRepository userRepository;
-  
+
   @Autowired
   private SimpMessagingTemplate simpMessagingTemplate;
   
@@ -44,21 +44,24 @@ public class UserService implements UserDetailsService, IUserService {
   private <T> User getUser(T userIdentifier, IUserRetrievalStrategy<T> strategy)
       throws UserNotFoundException {
     User user = strategy.getUser(userIdentifier);
-    
+
     if (user == null) { throw new UserNotFoundException("User not found."); }
-    
+
     return user;
   }
 
-  public User getUser(long userId) throws BeansException, UserNotFoundException {
+  public User getUser(long userId)
+      throws BeansException, UserNotFoundException {
     return this.getUser(userId, beanFactory.getBean(UserRetrievalByIdStrategy.class));
   }
 
-  public User getUser(String userEmail) throws BeansException, UserNotFoundException {
+  public User getUser(String userEmail)
+      throws BeansException, UserNotFoundException {
     return this.getUser(userEmail, beanFactory.getBean(UserRetrievalByEmailStrategy.class));
   }
 
-  public User getUser(SecurityContext userSecurityContext) throws BeansException, UserNotFoundException {
+  public User getUser(SecurityContext userSecurityContext)
+      throws BeansException, UserNotFoundException {
     return this.getUser(userSecurityContext, beanFactory.getBean(UserRetrievalBySecurityContextStrategy.class));
   }
 
@@ -96,7 +99,8 @@ public class UserService implements UserDetailsService, IUserService {
     return user != null;
   }
 
-  public void addUser(RegistrationDTO registrationDTO) throws ValidationException {
+  public void addUser(RegistrationDTO registrationDTO)
+      throws ValidationException {
     if (this.doesUserExist(registrationDTO.getEmail())) {
       throw new ValidationException("User already exists.");
     }
@@ -110,7 +114,7 @@ public class UserService implements UserDetailsService, IUserService {
         encryptedPassword,
         "STANDARD-ROLE"
       );
-      
+ 
       userRepository.save(user);
     } catch (ConstraintViolationException e) {
       throw new ValidationException(e.getConstraintViolations().iterator().next().getMessage());
@@ -129,13 +133,13 @@ public class UserService implements UserDetailsService, IUserService {
       user.getEmail(),
       user.getFullName()
     );
-  }  
-  
+  }
+
   // TODO: switch to a TINYINT field called "numOfConnections" to add/subtract
   // the total amount of user connections
   public void setIsPresent(User user, Boolean stat) {
     user.setIsPresent(stat);
-     
+
     userRepository.save(user);
   }
 

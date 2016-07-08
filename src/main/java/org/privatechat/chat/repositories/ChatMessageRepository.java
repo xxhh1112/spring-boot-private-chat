@@ -15,9 +15,9 @@ public interface ChatMessageRepository extends CrudRepository<ChatMessage, Strin
     @Query(" FROM"
         + "    ChatMessage m"
         + "  WHERE"
-        + "    m.authorUserId IN (:userIdOne, :userIdTwo)"
+        + "    m.authorUser.id IN (:userIdOne, :userIdTwo)"
         + "  AND"
-        + "    m.recipientUserId IN (:userIdOne, :userIdTwo)"
+        + "    m.recipientUser.id IN (:userIdOne, :userIdTwo)"
         + "  ORDER BY"
         + "    m.timeSent"
         + "  DESC")

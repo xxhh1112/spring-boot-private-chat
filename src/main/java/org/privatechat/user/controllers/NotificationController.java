@@ -12,5 +12,4 @@ public class NotificationController implements INotificationController {
   public String notifications(@DestinationVariable long userId, String message) {
     return message;
   }
-
 }

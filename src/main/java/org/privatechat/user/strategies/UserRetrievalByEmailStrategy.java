@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserRetrievalByEmailStrategy implements IUserRetrievalStrategy<String> {
   private UserRepository userRepository;
-  
+
   @Autowired
   public UserRetrievalByEmailStrategy(UserRepository userRepository) {
     this.userRepository = userRepository;

@@ -25,12 +25,12 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/ws").withSockJS();
   }
-  
+
   @Bean
   public UserPresenceService presenceChannelInterceptor() {
     return new UserPresenceService();
   }
-   
+
   @Override
   public void configureClientInboundChannel(ChannelRegistration registration) {
     registration.setInterceptors(presenceChannelInterceptor());

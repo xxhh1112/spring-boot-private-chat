@@ -2,11 +2,11 @@ package org.privatechat.user.DTOs;
 
 public class NotificationDTO {
   private String type;
-  
+
   private String contents;
-  
+
   private long fromUserId;
-  
+
   public NotificationDTO() {}
 
   public NotificationDTO(String type, String contents, long fromUserId) {
@@ -14,7 +14,7 @@ public class NotificationDTO {
     this.contents = contents;
     this.fromUserId = fromUserId;
   }
-  
+
   public String getType() {
     return this.type;
   }

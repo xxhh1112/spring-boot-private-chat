@@ -38,19 +38,22 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
   @Bean
   @Override
-  public AuthenticationManager authenticationManagerBean() throws Exception {
+  public AuthenticationManager authenticationManagerBean()
+      throws Exception {
     return super.authenticationManagerBean();
   }
 
   @Override
-  public void configure(AuthenticationManagerBuilder auth) throws Exception {
+  public void configure(AuthenticationManagerBuilder auth)
+      throws Exception {
     auth
       .userDetailsService(this.userService)
       .passwordEncoder(new BCryptPasswordEncoder());
   }
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  protected void configure(HttpSecurity http)
+      throws Exception {
     http
       .csrf()
       .disable(); // TODO: enable CSRF

@@ -8,7 +8,7 @@ import org.privatechat.user.models.User;
 public class UserMapper {
   public static List<UserDTO> mapUsersToUserDTOs(List<User> users) {
     List<UserDTO> dtos = new ArrayList<UserDTO>();
-    
+
     for(User user : users) {
       dtos.add(
         new UserDTO(
@@ -18,7 +18,7 @@ public class UserMapper {
         )
       );
     }
-    
+
     return dtos;
   }
 }

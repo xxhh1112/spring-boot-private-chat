@@ -11,11 +11,11 @@ import java.util.List;
 @Transactional
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-  
+
   public User findByEmail(String email);
 
   public User findById(long id);
-  
+
   @Query(" FROM"
       + "    User u"
       + "  WHERE"
