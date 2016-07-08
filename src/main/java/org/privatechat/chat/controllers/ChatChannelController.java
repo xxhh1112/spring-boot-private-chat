@@ -9,6 +9,7 @@ import org.privatechat.chat.services.ChatService;
 import org.privatechat.shared.http.JSONResponseHelper;
 import org.privatechat.user.exceptions.IsSameUserException;
 import org.privatechat.user.exceptions.UserNotFoundException;
+import org.privatechat.user.models.User;
 import org.privatechat.user.services.UserService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -46,11 +47,13 @@ public class ChatChannelController implements IChatChannelController {
     public ResponseEntity<String> establishChatChannel(@RequestBody ChatChannelInitializationDTO chatChannelInitialization) 
       throws IsSameUserException, UserNotFoundException { 
       String channelUuid = chatService.establishChatSession(chatChannelInitialization);
+      User userOne = userService.getUser(chatChannelInitialization.getUserIdOne());
+      User userTwo = userService.getUser(chatChannelInitialization.getUserIdTwo());
 
       EstablishedChatChannelDTO establishedChatChannel = new EstablishedChatChannelDTO(
         channelUuid,
-          userService.given(chatChannelInitialization.getUserIdOne()).retrieveUserInfo().getFullName(),
-        userService.given(chatChannelInitialization.getUserIdTwo()).retrieveUserInfo().getFullName()
+        userOne.getFullName(),
+        userTwo.getFullName()
       );  
     
       return JSONResponseHelper.createResponse(establishedChatChannel, HttpStatus.OK);

@@ -2,6 +2,7 @@ package org.privatechat.user.services;
 
 import org.privatechat.user.exceptions.UserNotFoundException;
 import org.privatechat.user.interfaces.IUserPresenceService;
+import org.privatechat.user.models.User;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,10 @@ public class UserPresenceService extends ChannelInterceptorAdapter implements IU
   
   private void toggleUserPresence(String userEmail, Boolean isPresent) {
     try {
-      userService.given(userEmail).setIsPresent(isPresent);
-	  } catch (BeansException | UserNotFoundException e) {
-	    e.printStackTrace();
-	  }
+      User user = userService.getUser(userEmail);
+      userService.setIsPresent(user, isPresent);
+    } catch (BeansException | UserNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 }

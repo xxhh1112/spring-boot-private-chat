@@ -11,6 +11,7 @@ import org.privatechat.chat.repositories.ChatMessageRepository;
 import org.privatechat.user.DTOs.NotificationDTO;
 import org.privatechat.user.exceptions.IsSameUserException;
 import org.privatechat.user.exceptions.UserNotFoundException;
+import org.privatechat.user.models.User;
 import org.privatechat.user.services.UserService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,17 +78,16 @@ public class ChatService implements IChatService {
     chatMessageRepository.save(chatMessage);
     
     try {
-      String fromUserFullName = userService.given(
-        chatMessage.getAuthorUserId()).retrieveUserInfo().getFullName();
-        
-      userService.given(chatMessage.getRecipientUserId())
-        .notifyUser(
-          new NotificationDTO(
-            "ChatMessageNotification",
-            fromUserFullName + " has sent you a message",
-            chatMessage.getAuthorUserId()
-          )
-        );
+      User fromUser = userService.getUser(chatMessage.getAuthorUserId());
+      User recipientUser = userService.getUser(chatMessage.getRecipientUserId());
+      
+      userService.notifyUser(recipientUser,
+        new NotificationDTO(
+          "ChatMessageNotification",
+          fromUser.getFullName() + " has sent you a message",
+          chatMessage.getAuthorUserId()
+        )
+      );
     } catch (UserNotFoundException | BeansException e) {
       e.printStackTrace();
     }
