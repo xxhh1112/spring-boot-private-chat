@@ -12,7 +12,6 @@ import org.privatechat.user.exceptions.UserNotFoundException;
 import org.privatechat.user.models.User;
 import org.privatechat.user.services.UserService;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Controller
 public class ChatChannelController implements IChatChannelController {
@@ -37,7 +34,8 @@ public class ChatChannelController implements IChatChannelController {
 
     @MessageMapping("/private.chat.{channelId}")
     @SendTo("/topic/private.chat.{channelId}")
-    public ChatMessageDTO chatMessage(@DestinationVariable String channelId, ChatMessageDTO message) {
+    public ChatMessageDTO chatMessage(@DestinationVariable String channelId, ChatMessageDTO message)
+        throws BeansException, UserNotFoundException {
       chatService.submitMessage(message);
 
       return message;
@@ -45,7 +43,7 @@ public class ChatChannelController implements IChatChannelController {
 
     @RequestMapping(value="/api/private-chat/channel", method=RequestMethod.PUT, produces="application/json", consumes="application/json")
     public ResponseEntity<String> establishChatChannel(@RequestBody ChatChannelInitializationDTO chatChannelInitialization) 
-      throws IsSameUserException, UserNotFoundException { 
+        throws IsSameUserException, UserNotFoundException { 
       String channelUuid = chatService.establishChatSession(chatChannelInitialization);
       User userOne = userService.getUser(chatChannelInitialization.getUserIdOne());
       User userTwo = userService.getUser(chatChannelInitialization.getUserIdTwo());
@@ -54,7 +52,7 @@ public class ChatChannelController implements IChatChannelController {
         channelUuid,
         userOne.getFullName(),
         userTwo.getFullName()
-      );  
+      );
     
       return JSONResponseHelper.createResponse(establishedChatChannel, HttpStatus.OK);
     }

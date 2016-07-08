@@ -2,6 +2,9 @@ package org.privatechat.chat.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import org.privatechat.user.models.User;
+
 import java.util.UUID;
 
 @Entity
@@ -12,36 +15,36 @@ public class ChatChannel {
   @NotNull
   private String uuid;
 
-  @NotNull
-  private long userIdOne;
+  @OneToOne
+  @JoinColumn(name = "userIdOne")
+  private User userOne;
 
-  @NotNull
-  private long userIdTwo;
+  @OneToOne
+  @JoinColumn(name = "userIdTwo")
+  private User userTwo;
 
-  public ChatChannel(long userIdOne, long userIdTwo) {
+  public ChatChannel(User userOne, User userTwo) {
     this.uuid = UUID.randomUUID().toString();
-    this.userIdOne = userIdOne;
-    this.userIdTwo = userIdTwo;
+    this.userOne = userOne;
+    this.userTwo = userTwo;
   }
 
-  public ChatChannel() {
+  public ChatChannel() {}
 
+  public void setUserTwo(User user) {
+    this.userTwo = user;
   }
 
-  public void setUserIdOne(long userIdOne) {
-    this.userIdOne = userIdOne;
+  public void setUserOne(User user) {
+    this.userOne = user;
   }
 
-  public void setUserIdTwo(long userIdTwo) {
-    this.userIdTwo = userIdTwo;
+  public User getUserOne() {
+    return this.userOne;
   }
 
-  public long getUserIdOne() {
-    return this.userIdOne;
-  }
-
-  public long getUserIdTwo() {
-    return this.userIdTwo;
+  public User getUserTwo() {
+    return this.userTwo;
   }
 
   public String getUuid() {

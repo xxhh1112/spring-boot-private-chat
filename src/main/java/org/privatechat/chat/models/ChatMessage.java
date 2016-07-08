@@ -2,6 +2,9 @@ package org.privatechat.chat.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import org.privatechat.user.models.User;
+
 import java.util.Date;
 
 @Entity
@@ -11,11 +14,13 @@ public class ChatMessage {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @NotNull
-  private long authorUserId;
+  @OneToOne
+  @JoinColumn(name = "authorUserId")
+  private User authorUser;
 
-  @NotNull
-  private long recipientUserId;
+  @OneToOne
+  @JoinColumn(name = "recipientUserId")
+  private User recipientUser;
 
   @NotNull
   private Date timeSent;
@@ -25,9 +30,9 @@ public class ChatMessage {
 
   public ChatMessage() {}
 
-  public ChatMessage(long authorUserId, long recipientUserId, String contents) {
-    this.authorUserId = authorUserId;
-    this.recipientUserId = recipientUserId;
+  public ChatMessage(User authorUser, User recipientUser, String contents) {
+    this.authorUser = authorUser;
+    this.recipientUser = recipientUser;
     this.contents = contents;
     this.timeSent = new Date();
   }
@@ -36,14 +41,22 @@ public class ChatMessage {
     return this.id;
   }
   
-  public long getAuthorUserId() {
-    return this.authorUserId;
+  public User getAuthorUser() {
+    return this.authorUser;
   }
   
-  public long getRecipientUserId() {
-    return this.recipientUserId;
+  public User getRecipientUser() {
+    return this.recipientUser;
+  }
+
+  public void setAuthorUser(User user) {
+    this.recipientUser = user;
   }
   
+  public void setRecipientUser(User user) {
+    this.authorUser = user;
+  }
+
   public Date getTimeSent() {
     return this.timeSent;
   }

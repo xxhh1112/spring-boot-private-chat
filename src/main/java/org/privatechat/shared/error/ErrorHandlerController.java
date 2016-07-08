@@ -7,7 +7,6 @@ import org.privatechat.shared.exceptions.ValidationException;
 import org.privatechat.shared.http.JSONResponseHelper;
 import org.privatechat.shared.interfaces.IErrorHandlerController;
 import org.privatechat.user.exceptions.IsSameUserException;
-import org.privatechat.user.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,7 +24,7 @@ public class ErrorHandlerController implements IErrorHandlerController {
   public ResponseEntity<String> error() {
     return new ResponseEntity<String>(routeToIndexFallBack(), HttpStatus.NOT_FOUND);
   }
-  
+
   private String routeToIndexFallBack() {
     Scanner scanner;
     StringBuilder result = new StringBuilder("");
@@ -33,7 +32,7 @@ public class ErrorHandlerController implements IErrorHandlerController {
 
     try {
       scanner = new Scanner(new File(classLoader.getResource("static/index.html").getFile()));
-      
+
       while (scanner.hasNextLine()) {
         String curLine = scanner.nextLine();
         result.append(curLine).append("\n");
@@ -54,19 +53,19 @@ public class ErrorHandlerController implements IErrorHandlerController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-  
+
     return JSONResponseHelper.createResponse(
       "Error. Contact your administrator",
       HttpStatus.INTERNAL_SERVER_ERROR
     );  
   }
-  
+
   // There's no way to iterate over exceptions with the 'instanceof' operator
   private Boolean isExceptionInWhiteList(Exception exception) {
     if (exception instanceof IsSameUserException) return true;
     if (exception instanceof ValidationException) return true;
     // TODO: if (exception instanceof UserNotFoundException) return true;
-    
+
     return false;
   }
 }

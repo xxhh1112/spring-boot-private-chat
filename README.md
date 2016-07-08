@@ -34,7 +34,6 @@
  
 ##Todos
 - Separate out `index.js` file into smaller services/configs
-- Use a better/cleaner `JOIN` strategy for `ChatChannel` <-> `ChatMessage` tables
 - Persist notifications
 - Figure out how to have Spring Security return a custom UserDTO on `/login`. Currently, after login, a call to `/api/user/requesting/info` is made and the `Principal` context drives the rest. Not elegant.
 - Refactor `user` table `isPresent` (boolean) to be `numberOfConnections` (int).
@@ -46,6 +45,9 @@
 - ChatService.getExistingChatMessages(...) currently reverses the `List<ChatMessageDTO` collection because the query needs some attention.
 - Handle frontend exception when requested chat user doesn't exist on the frontend
 - Clean up hacky notifications SCSS
+- Improve the way global error handler intercepts HTTPs responses
+- Switch all e.printStackTrace to use the logger
+
 
 ##License
 MIT

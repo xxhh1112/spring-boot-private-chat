@@ -50,10 +50,11 @@ public class ChatService implements IChatService {
     return (channel != null && !channel.isEmpty()) ? channel.get(0).getUuid() : null;
   }
 
-  private String newChatSession(ChatChannelInitializationDTO chatChannelInitializationDTO) {
+  private String newChatSession(ChatChannelInitializationDTO chatChannelInitializationDTO)
+      throws BeansException, UserNotFoundException {
     ChatChannel channel = new ChatChannel(
-      chatChannelInitializationDTO.getUserIdOne(),
-      chatChannelInitializationDTO.getUserIdTwo()
+      userService.getUser(chatChannelInitializationDTO.getUserIdOne()),
+      userService.getUser(chatChannelInitializationDTO.getUserIdTwo())
     );
     
     chatChannelRepository.save(channel);
@@ -62,49 +63,48 @@ public class ChatService implements IChatService {
   }
 
   public String establishChatSession(ChatChannelInitializationDTO chatChannelInitializationDTO)
-      throws IsSameUserException {
+      throws IsSameUserException, BeansException, UserNotFoundException {
     if (chatChannelInitializationDTO.getUserIdOne() == chatChannelInitializationDTO.getUserIdTwo()) {
       throw new IsSameUserException();
     }
 
     String uuid = getExistingChannel(chatChannelInitializationDTO);
-  
+
+    // If channel doesn't already exist, create a new one
     return (uuid != null) ? uuid : newChatSession(chatChannelInitializationDTO);
   }
   
-  public void submitMessage(ChatMessageDTO chatMessageDTO) {
+  public void submitMessage(ChatMessageDTO chatMessageDTO)
+      throws BeansException, UserNotFoundException {
     ChatMessage chatMessage = ChatMessageMapper.mapChatDTOtoMessage(chatMessageDTO);
 
     chatMessageRepository.save(chatMessage);
-    
-    try {
-      User fromUser = userService.getUser(chatMessage.getAuthorUserId());
-      User recipientUser = userService.getUser(chatMessage.getRecipientUserId());
+
+    User fromUser = userService.getUser(chatMessage.getAuthorUser().getId());
+    User recipientUser = userService.getUser(chatMessage.getRecipientUser().getId());
       
-      userService.notifyUser(recipientUser,
-        new NotificationDTO(
-          "ChatMessageNotification",
-          fromUser.getFullName() + " has sent you a message",
-          chatMessage.getAuthorUserId()
-        )
-      );
-    } catch (UserNotFoundException | BeansException e) {
-      e.printStackTrace();
-    }
+    userService.notifyUser(recipientUser,
+      new NotificationDTO(
+        "ChatMessageNotification",
+        fromUser.getFullName() + " has sent you a message",
+        chatMessage.getAuthorUser().getId()
+      )
+    );
   }
  
   public List<ChatMessageDTO> getExistingChatMessages(String channelUuid) {
     ChatChannel channel = chatChannelRepository.getChannelDetails(channelUuid);
-    
+
     List<ChatMessage> chatMessages = 
       chatMessageRepository.getExistingChatMessages(
-        channel.getUserIdOne(),
-        channel.getUserIdTwo(),
+        channel.getUserOne().getId(),
+        channel.getUserTwo().getId(),
         new PageRequest(0, MAX_PAGABLE_CHAT_MESSAGES)
       );
-    
+
+    // TODO: fix this
     List<ChatMessage> messagesByLatest = Lists.reverse(chatMessages); 
-    
+
     return ChatMessageMapper.mapMessagesToChatDTOs(messagesByLatest);
   }
 }

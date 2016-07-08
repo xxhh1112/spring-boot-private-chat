@@ -7,29 +7,31 @@ import org.privatechat.user.DTOs.RegistrationDTO;
 import org.privatechat.user.DTOs.UserDTO;
 import org.privatechat.user.exceptions.UserNotFoundException;
 import org.privatechat.user.models.User;
-import org.privatechat.user.services.UserService;
 import org.springframework.beans.BeansException;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserService {
-  User getUser(String userEmail) throws BeansException, UserNotFoundException;
+  User getUser(String userEmail)
+      throws BeansException, UserNotFoundException;
 
-  User getUser(long userId) throws BeansException, UserNotFoundException;
-  
-  User getUser(SecurityContext securityContext) throws BeansException, UserNotFoundException;
+  User getUser(long userId)
+      throws BeansException, UserNotFoundException;
+
+  User getUser(SecurityContext securityContext)
+      throws BeansException, UserNotFoundException;
 
   boolean doesUserExist(String email);
-  
-  void addUser(RegistrationDTO registrationDTO) throws ValidationException;
+
+  void addUser(RegistrationDTO registrationDTO)
+      throws ValidationException;
 
   List<UserDTO> retrieveFriendsList(User user);
-  
+
   UserDTO retrieveUserInfo(User user);
-  
+
   void setIsPresent(User user, Boolean stat);
-  
+
   Boolean isPresent(User user);
-  
+
   void notifyUser(User user, NotificationDTO notification);
 }

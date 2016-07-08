@@ -18,10 +18,10 @@ public class UserRetrievalBySecurityContextStrategy implements IUserRetrievalStr
   @Override
   public User getUser(SecurityContext securityContext) {
     org.springframework.security.core.userdetails.User userFromSecurityContext;
-    
+
     userFromSecurityContext = (org.springframework.security.core.userdetails.User)
       securityContext.getAuthentication().getPrincipal();
-    
+
     return userRepository.findByEmail(userFromSecurityContext.getUsername());
   }
 }
