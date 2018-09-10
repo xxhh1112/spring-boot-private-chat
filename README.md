@@ -3,7 +3,7 @@
 1-1 instant messaging project designed to demonstrate WebSockets in a load-balanced environment. Users can register, login/logout, see a friendslist, private message, and send/receive notifications. WebSocket usages include user presence monitoring, notifications, and chat messages.
 
 ## Notable Technologies/Design Decisions
-- Backend: Java 8 with Sprint Boot
+- Backend: Java 8 with Spring Boot
 - Frontend: Angular.js
 - Message Broker: RabbitMQ (PubSub pattern for multi-server messaging)
 - Database: MySQL
